@@ -15,7 +15,7 @@
    limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.google.ar.core.examples.java.helloar"
+    package="com.arcore.example"
     android:versionCode="0"
     android:versionName="0" >
 
