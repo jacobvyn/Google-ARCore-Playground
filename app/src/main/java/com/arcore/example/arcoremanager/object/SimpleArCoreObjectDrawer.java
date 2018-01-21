@@ -47,7 +47,7 @@ public class SimpleArCoreObjectDrawer implements ARCoreObjectDrawer {
         // Adding an Anchor tells ARCore that it should track this position in
         // space. This anchor will be used in PlaneAttachment to place the 3d model
         // in the correct position relative both to the world and to the plane.
-        positions.add(new ArCoreObject(new PlaneAttachment(planeHitResult.getPlane(), arCoreSession.addAnchor(planeHitResult.getHitPose()))));
+        positions.add(new ArCoreObject(new PlaneAttachment(planeHitResult.getPlane(), arCoreSession.addAnchor(planeHitResult.getHitPose())), true));
 
         // Hits are sorted by depth. Consider only closest hit on a plane.
     }
