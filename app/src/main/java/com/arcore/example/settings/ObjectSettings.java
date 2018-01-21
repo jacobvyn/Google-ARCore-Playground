@@ -2,8 +2,10 @@ package com.arcore.example.settings;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 
 import com.arcore.example.R;
@@ -15,52 +17,58 @@ import butterknife.ButterKnife;
 
 public class ObjectSettings extends FrameLayout {
 
-    private final Listener listener;
     @BindView(R.id.config_object_scale)
-    RadioButton configScale;
+    RadioButton mConfigScale;
     @BindView(R.id.config_object_rotate)
-    RadioButton configRotate;
+    RadioButton mConfigRotate;
     @BindView(R.id.config_object_translate)
-    RadioButton configTranslate;
+    RadioButton mConfigTranslate;
+    @BindView(R.id.clear_screen_image_view)
+    ImageView mClearScreen;
 
     public ObjectSettings(@NonNull Context context, @NonNull Listener listener) {
         super(context);
         inflate(context, R.layout.config_objects, this);
         ButterKnife.bind(this);
-        this.listener = listener;
 
-        configScale.setOnCheckedChangeListener((compoundButton, checked) -> {
-            if(checked) {
+        mConfigScale.setOnCheckedChangeListener((compoundButton, checked) -> {
+            if (checked) {
                 uncheckedOthers(compoundButton);
                 listener.onTouchModeChanged(ArCoreManager.ObjectTouchMode.SCALE);
             }
         });
-        configRotate.setOnCheckedChangeListener((compoundButton, checked) -> {
-            if(checked) {
+        mConfigRotate.setOnCheckedChangeListener((compoundButton, checked) -> {
+            if (checked) {
                 uncheckedOthers(compoundButton);
                 listener.onTouchModeChanged(ArCoreManager.ObjectTouchMode.ROTATE);
             }
         });
-        configTranslate.setOnCheckedChangeListener((compoundButton, checked) -> {
-            if(checked) {
+        mConfigTranslate.setOnCheckedChangeListener((compoundButton, checked) -> {
+            if (checked) {
                 uncheckedOthers(compoundButton);
-                listener.onTouchModeChanged(ArCoreManager.ObjectTouchMode.TRANSLATE);
+                listener.onTouchModeChanged(ArCoreManager.ObjectTouchMode.MOVE);
             }
         });
 
-        configScale.setChecked(true);
+        mClearScreen.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onClearScreen();
+            }
+        });
+
+        mConfigScale.setChecked(true);
     }
 
     private void uncheckedOthers(CompoundButton exception) {
-        configScale.setChecked(false);
-        configTranslate.setChecked(false);
-        configRotate.setChecked(false);
+        mConfigScale.setChecked(false);
+        mConfigTranslate.setChecked(false);
+        mConfigRotate.setChecked(false);
         exception.setChecked(true);
     }
 
     public interface Listener {
         void onTouchModeChanged(ArCoreManager.ObjectTouchMode objectTouchMode);
+        void onClearScreen();
     }
-
-
 }

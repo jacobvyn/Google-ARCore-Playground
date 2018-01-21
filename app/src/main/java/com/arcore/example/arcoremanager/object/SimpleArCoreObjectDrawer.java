@@ -3,6 +3,7 @@ package com.arcore.example.arcoremanager.object;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.ar.core.Anchor;
 import com.google.ar.core.PlaneHitResult;
 import com.google.ar.core.Session;
 import com.arcore.example.core.ARCanvas;
@@ -13,6 +14,7 @@ import com.google.ar.core.exceptions.NotTrackingException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class SimpleArCoreObjectDrawer implements ARCoreObjectDrawer {
@@ -45,9 +47,7 @@ public class SimpleArCoreObjectDrawer implements ARCoreObjectDrawer {
         // Adding an Anchor tells ARCore that it should track this position in
         // space. This anchor will be used in PlaneAttachment to place the 3d model
         // in the correct position relative both to the world and to the plane.
-        positions.add(new ArCoreObject(new PlaneAttachment(
-                planeHitResult.getPlane(),
-                arCoreSession.addAnchor(planeHitResult.getHitPose()))));
+        positions.add(new ArCoreObject(new PlaneAttachment(planeHitResult.getPlane(), arCoreSession.addAnchor(planeHitResult.getHitPose()))));
 
         // Hits are sorted by depth. Consider only closest hit on a plane.
     }
@@ -56,7 +56,7 @@ public class SimpleArCoreObjectDrawer implements ARCoreObjectDrawer {
     public void setScaleFactor(float scaleFactor) {
         if (!positions.isEmpty()) {
             final ArCoreObject last = positions.get(positions.size() - 1);
-            last.setScale(last.getScale()*scaleFactor);
+            last.setScale(last.getScale() * scaleFactor);
         }
     }
 
@@ -77,6 +77,20 @@ public class SimpleArCoreObjectDrawer implements ARCoreObjectDrawer {
     }
 
     @Override
+    public Collection<Anchor> getAnchors() {
+        List<Anchor> anchors = new ArrayList<Anchor>();
+        for (ArCoreObject object : positions) {
+            anchors.add(object.getAnchor());
+        }
+        return anchors;
+    }
+
+    @Override
+    public void clearList() {
+        positions.clear();
+    }
+
+    @Override
     public void onDraw(ARCanvas arCanvas) {
         // Visualize anchors created by touch.
         for (ArCoreObject arCoreObject : positions) {
@@ -88,7 +102,7 @@ public class SimpleArCoreObjectDrawer implements ARCoreObjectDrawer {
         }
     }
 
-    protected void drawObject(ARCanvas arCanvas, ArCoreObject arCoreObject){
+    protected void drawObject(ARCanvas arCanvas, ArCoreObject arCoreObject) {
         // Get the current combined pose of an Anchor and Plane in world space. The Anchor
         // and Plane poses are updated during calls to session.update() as ARCore refines
         // its estimate of the world.

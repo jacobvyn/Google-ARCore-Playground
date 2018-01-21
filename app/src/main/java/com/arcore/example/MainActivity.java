@@ -18,8 +18,6 @@ package com.arcore.example;
 
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +28,6 @@ import android.widget.Toast;
 import com.arcore.example.arcoremanager.ArCoreManager;
 import com.arcore.example.arcoremanager.object.BugDroidArCoreObjectDrawer;
 import com.arcore.example.settings.ObjectSettings;
-import com.arcore.example.settings.SettingsView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
     }
 
     public void init() {
@@ -68,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         }
         arCoreManager = new ArCoreManager(this, new ArCoreManager.Listener() {
             @Override
-            public void onArCoreUnsuported() {
+            public void onArCoreUnsupported() {
                 Toast.makeText(MainActivity.this, "This device does not support AR", Toast.LENGTH_LONG).show();
                 finish();
             }
@@ -96,10 +92,20 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
-
         arCoreManager.setup(mSurfaceView);
         arCoreManager.addObjectToDraw(new BugDroidArCoreObjectDrawer());
-        configLocal.addView(new ObjectSettings(this, objectTouchMode -> arCoreManager.setTouchMode(objectTouchMode)));
+
+        configLocal.addView(new ObjectSettings(this, new ObjectSettings.Listener() {
+            @Override
+            public void onTouchModeChanged(ArCoreManager.ObjectTouchMode objectTouchMode) {
+                arCoreManager.setTouchMode(objectTouchMode);
+            }
+
+            @Override
+            public void onClearScreen() {
+                arCoreManager.onClearScreen();
+            }
+        }));
     }
 
     @Override
@@ -114,22 +120,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-
-        // ARCore requires camera permissions to operate. If we did not yet obtain runtime
-        // permission on Android M and above, now is a good time to ask the user for it.
         if (PermissionHelper.hasCameraPermission(this)) {
-            // Note that order matters - see the note in onPause(), the reverse applies here.
             init();
         } else {
             PermissionHelper.requestCameraPermission(this);
         }
-    }
-
-    private void openSettings() {
-        new AlertDialog.Builder(this)
-                .setView(new SettingsView(this, arCoreManager.getSettings()))
-                .create()
-                .show();
     }
 
     @Override

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.arcore.example.core.rendering;
 
 import javax.vecmath.Vector3f;
@@ -26,13 +26,13 @@ public class BiquadFilter {
 
     private BiquadFilterInstance[] inst = new BiquadFilterInstance[3];
 
-    public BiquadFilter(double Fc){
-        for(int i=0;i<3;i++){
+    public BiquadFilter(double Fc) {
+        for (int i = 0; i < 3; i++) {
             inst[i] = new BiquadFilterInstance(Fc);
         }
     }
 
-    public Vector3f update(Vector3f in){
+    public Vector3f update(Vector3f in) {
         val.x = (float) inst[0].process(in.x);
         val.y = (float) inst[1].process(in.y);
         val.z = (float) inst[2].process(in.z);
@@ -41,15 +41,15 @@ public class BiquadFilter {
 
     private class BiquadFilterInstance {
         double a0, a1, a2, b1, b2;
-        double Fc=0.5,Q=0.707, peakGain=0.0;
-        double z1=0.0, z2=0.0;
+        double Fc = 0.5, Q = 0.707, peakGain = 0.0;
+        double z1 = 0.0, z2 = 0.0;
 
-        BiquadFilterInstance(double fc){
+        BiquadFilterInstance(double fc) {
             Fc = fc;
             calcBiquad();
         }
 
-        double process(double in){
+        double process(double in) {
             double out = in * a0 + z1;
             z1 = in * a1 + z2 - b1 * out;
             z2 = in * a2 - b2 * out;

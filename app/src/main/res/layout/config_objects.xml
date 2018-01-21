@@ -72,5 +72,23 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingLeft="16dp">
+
+            <ImageView
+                android:id="@+id/clear_screen_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleX="0.7"
+                android:scaleY="0.7"
+                android:src="@drawable/ic_action_discard" />
+
+        </LinearLayout>
+
     </LinearLayout>
 </LinearLayout>

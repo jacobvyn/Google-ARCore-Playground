@@ -1,6 +1,5 @@
 package com.arcore.example.arcoremanager;
 
-import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.support.annotation.NonNull;
 import android.support.v4.view.GestureDetectorCompat;
@@ -15,21 +14,16 @@ import com.google.ar.core.Session;
 import com.arcore.example.RotationGestureDetector;
 import com.arcore.example.arcoremanager.object.ARCoreObjectDrawer;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-
 import florent37.github.com.rxlifecycle.RxLifecycle;
 
 public class ArCoreManager {
 
     private final AppCompatActivity mActivity;
 
-    private final Session mArcoreSession;
+    private final Session mARCoreSession;
     private final Config mDefaultConfig;
     private final Listener mListener;
-    private final Settings mSettings = new Settings();
-    private com.arcore.example.arcoremanager.ARCoreRenderer ARCoreRenderer;
+    private ARCoreRenderer mARCoreRenderer;
     private GLSurfaceView mSurfaceView;
     private ObjectTouchMode touchMode = ObjectTouchMode.SCALE;
 
@@ -38,16 +32,16 @@ public class ArCoreManager {
         this.mListener = listener;
 
         // Create default config, check is supported, create session from that config.
-        mArcoreSession = new Session(/*context=*/activity);
+        mARCoreSession = new Session(/*context=*/activity);
         mDefaultConfig = Config.createDefaultConfig();
 
-        if (!mArcoreSession.isSupported(mDefaultConfig)) {
-            listener.onArCoreUnsuported();
+        if (!mARCoreSession.isSupported(mDefaultConfig)) {
+            listener.onArCoreUnsupported();
         }
     }
 
     public void setup(final GLSurfaceView surfaceView) {
-        ARCoreRenderer = new ARCoreRenderer(mActivity, mArcoreSession, mSettings);
+        mARCoreRenderer = new ARCoreRenderer(mActivity, mARCoreSession);
 
         this.mSurfaceView = surfaceView;
 
@@ -55,7 +49,7 @@ public class ArCoreManager {
         surfaceView.setPreserveEGLContextOnPause(true);
         surfaceView.setEGLContextClientVersion(2);
         surfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0); // Alpha used for plane blending.
-        surfaceView.setRenderer(ARCoreRenderer);
+        surfaceView.setRenderer(mARCoreRenderer);
         surfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
         surfaceView.setOnTouchListener(new View.OnTouchListener() {
@@ -63,14 +57,14 @@ public class ArCoreManager {
             private final GestureDetectorCompat mGestureDetector = new GestureDetectorCompat(mActivity, new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onSingleTapUp(MotionEvent event) {
-                    ARCoreRenderer.addSingleTapEvent(event);
+                    mARCoreRenderer.addSingleTapEvent(event);
                     return true;
                 }
 
                 @Override
                 public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                    if (touchMode == ObjectTouchMode.TRANSLATE) {
-                        ARCoreRenderer.onTranslate(-distanceX / 100f, -distanceY / 500f);
+                    if (touchMode == ObjectTouchMode.MOVE) {
+                        mARCoreRenderer.onTranslate(-distanceX / 200f, -distanceY / 200f);
                         return true;
                     } else {
                         return false;
@@ -82,7 +76,7 @@ public class ArCoreManager {
                 @Override
                 public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
                     if (touchMode == ObjectTouchMode.SCALE) {
-                        ARCoreRenderer.onScale(scaleGestureDetector.getScaleFactor());
+                        mARCoreRenderer.onScale(scaleGestureDetector.getScaleFactor());
                         return true;
                     } else {
                         return false;
@@ -94,14 +88,13 @@ public class ArCoreManager {
                 @Override
                 public void OnRotation(RotationGestureDetector rotationDetector) {
                     if (touchMode == ObjectTouchMode.ROTATE) {
-                        ARCoreRenderer.onRotate(rotationDetector.getAngle());
+                        mARCoreRenderer.onRotate(rotationDetector.getAngle());
                     }
                 }
             });
 
             @Override
             public boolean onTouch(View view, MotionEvent event) {
-
                 boolean res = true;
                 if (touchMode == ObjectTouchMode.SCALE) {
                     res = mScaleDetector.onTouchEvent(event);
@@ -118,7 +111,7 @@ public class ArCoreManager {
                             return false;
                         }
                     }
-                } else if (touchMode == ObjectTouchMode.TRANSLATE) {
+                } else if (touchMode == ObjectTouchMode.MOVE) {
                     if (mGestureDetector.onTouchEvent(event)) {
                         return false;
                     }
@@ -127,20 +120,21 @@ public class ArCoreManager {
             }
         });
 
-        // ARCore requires camera permissions to operate. If we did not yet obtain runtime
-        // permission on Android M and above, now is a good time to ask the user for it.
+        subscribeOnLifeCycleEvents();
+
+        mARCoreRenderer.setListener(() -> {
+            if (mListener != null) {
+                mListener.hideLoadingMessage();
+            }
+        });
+    }
+
+    private void subscribeOnLifeCycleEvents() {
         RxLifecycle.with(mActivity)
                 .onResume()
-                //.flatMap($ -> new RxPermissions(mActivity).request(Manifest.permission.CAMERA))
-                //.flatMap(success -> {
-                //    if (!success) return Observable.error(new Throwable());
-                //    else return Observable.just(success);
-                //})
                 .subscribe(event -> {
                     mListener.showLoadingMessage();
-                    // Note that order matters - see the note in onPause(), the reverse applies here.
-                    mArcoreSession.resume(mDefaultConfig);
-
+                    mARCoreSession.resume(mDefaultConfig);
                     mSurfaceView.onResume();
                 }, throwable -> {
                     throwable.printStackTrace();
@@ -150,62 +144,37 @@ public class ArCoreManager {
         RxLifecycle.with(mActivity)
                 .onPause()
                 .subscribe(event -> {
-                    // Note that the order matters - GLSurfaceView is paused first so that it does not try
-                    // to query the session. If Session is paused before GLSurfaceView, GLSurfaceView may
-                    // still call mSession.update() and get a SessionPausedException.
                     mSurfaceView.onPause();
-                    mArcoreSession.pause();
+                    mARCoreSession.pause();
                 });
-
-        ARCoreRenderer.setListener(new com.arcore.example.arcoremanager.ARCoreRenderer.Listener() {
-            @Override
-            public void hideLoading() {
-                if (mListener != null) {
-                    mListener.hideLoadingMessage();
-                }
-            }
-        });
     }
 
     public void addObjectToDraw(ARCoreObjectDrawer arCoreObjectDrawer) {
-        ARCoreRenderer.addObjectToDraw(arCoreObjectDrawer);
-    }
-
-    public void setCaptureLines(boolean captureLines) {
-        mSettings.captureLines.set(captureLines);
-    }
-
-    public Settings getSettings() {
-        return mSettings;
+        mARCoreRenderer.addObjectToDraw(arCoreObjectDrawer);
     }
 
     public void setTouchMode(ObjectTouchMode objectTouchMode) {
         this.touchMode = objectTouchMode;
     }
 
+    public void onClearScreen() {
+        // TODO: 1/21/18
+        mARCoreRenderer.onClearScreen();
+    }
+
     public enum ObjectTouchMode {
         SCALE,
         ROTATE,
-        TRANSLATE
+        MOVE
     }
 
     public interface Listener {
-        void onArCoreUnsuported();
+        void onArCoreUnsupported();
 
         void onPermissionNotAllowed();
 
         void showLoadingMessage();
 
         void hideLoadingMessage();
-    }
-
-    public static class Settings {
-        public final AtomicBoolean drawBackground = new AtomicBoolean(true);
-        public final AtomicBoolean drawPoints = new AtomicBoolean(true);
-        public final AtomicBoolean captureLines = new AtomicBoolean(false);
-        public final AtomicBoolean drawPlanes = new AtomicBoolean(true);
-        ;
-        public final AtomicInteger linesColor = new AtomicInteger(Color.WHITE);
-        public final AtomicReference<Float> linesDistance = new AtomicReference<Float>(0.125f);
     }
 }

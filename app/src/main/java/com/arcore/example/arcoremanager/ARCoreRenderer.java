@@ -28,31 +28,22 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class ARCoreRenderer implements GLSurfaceView.Renderer {
 
-    private static final String TAG = "ARCoreRenderer";
-
-    // Tap handling and UI.
+    private static final String LOG_TAG = ARCoreRenderer.class.getSimpleName();
     private final ArrayBlockingQueue<MotionEvent> mQueuedSingleTaps = new ArrayBlockingQueue<>(16);
-
     private final Context mContext;
-    private final Session mArcoreSession;
-
-    //the objects opengl will draw
+    private final Session mARCoreSession;
     private final BackgroundDrawer mBackgroundDrawer;
     private final PlaneDrawer mPlaneDrawer;
-    private final ArCoreManager.Settings mSettings;
-
     private final List<ARCoreObjectDrawer> arCoreObjectDrawerList = new ArrayList<>();
     @Nullable
     private ARCoreObjectDrawer currentARCoreObjectDrawer = null;
-
     @Nullable
     private Listener mListener;
+    private final ARCanvas arCanvas = new ARCanvas();
 
-
-    public ARCoreRenderer(Context context, Session arCoreSession, ArCoreManager.Settings settings) {
+    public ARCoreRenderer(Context context, Session arCoreSession) {
         this.mContext = context;
-        this.mArcoreSession = arCoreSession;
-        mSettings = settings;
+        this.mARCoreSession = arCoreSession;
         mBackgroundDrawer = new BackgroundDrawer(arCoreSession);
         mPlaneDrawer = new PlaneDrawer(arCoreSession);
     }
@@ -60,7 +51,6 @@ public class ARCoreRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         GLES20.glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        // Create the texture and pass it to ARCore session to be filled during update().
 
         mBackgroundDrawer.prepare(mContext);
         mPlaneDrawer.prepare(mContext);
@@ -74,21 +64,18 @@ public class ARCoreRenderer implements GLSurfaceView.Renderer {
         GLES20.glViewport(0, 0, width, height);
         // Notify ARCore session that the view size changed so that the perspective matrix and
         // the video background can be properly adjusted.
-        mArcoreSession.setDisplayGeometry(width, height);
+        mARCoreSession.setDisplayGeometry(width, height);
 
         arCanvas.setWidth(width);
         arCanvas.setHeight(height);
     }
 
-    private final ARCanvas arCanvas = new ARCanvas();
-
     @Override
     public void onDrawFrame(GL10 gl) {
         // Check if we detected at least one plane. If so, hide the loading message.
         if (mListener != null) {
-            for (Plane plane : mArcoreSession.getAllPlanes()) {
-                if (plane.getType() == com.google.ar.core.Plane.Type.HORIZONTAL_UPWARD_FACING &&
-                        plane.getTrackingState() == Plane.TrackingState.TRACKING) {
+            for (Plane plane : mARCoreSession.getAllPlanes()) {
+                if (isPlaneTracked(plane)) {
                     mListener.hideLoading();
                     break;
                 }
@@ -102,7 +89,7 @@ public class ARCoreRenderer implements GLSurfaceView.Renderer {
             // Obtain the current arcoreFrame from ARSession. When the configuration is set to
             // UpdateMode.BLOCKING (it is by default), this will throttle the rendering to the
             // camera framerate.
-            final Frame arcoreFrame = mArcoreSession.update();
+            final Frame arcoreFrame = mARCoreSession.update();
 
             // Handle taps. Handling only one tap per arcoreFrame, as taps are usually low frequency
             // compared to arcoreFrame rate.
@@ -110,10 +97,8 @@ public class ARCoreRenderer implements GLSurfaceView.Renderer {
 
             arCanvas.setArcoreFrame(arcoreFrame);
 
-            if (mSettings.drawBackground.get()) {
-                // Draw background.
-                mBackgroundDrawer.onDraw(arCanvas);
-            }
+            // Draw background.
+            mBackgroundDrawer.onDraw(arCanvas);
 
             // If not tracking, don't draw 3d objects.
             if (arcoreFrame.getTrackingState() == Frame.TrackingState.NOT_TRACKING) {
@@ -124,7 +109,7 @@ public class ARCoreRenderer implements GLSurfaceView.Renderer {
 
             // Get projection matrix.
             final float[] projMatrix = new float[16];
-            mArcoreSession.getProjectionMatrix(projMatrix, 0, AppSettings.getNearClip(), AppSettings.getFarClip());
+            mARCoreSession.getProjectionMatrix(projMatrix, 0, AppSettings.getNearClip(), AppSettings.getFarClip());
 
             // Get camera matrix and draw.
             final float[] cameraMatrix = new float[16];
@@ -137,19 +122,20 @@ public class ARCoreRenderer implements GLSurfaceView.Renderer {
             arCanvas.setCameraMatrix(cameraMatrix);
             arCanvas.setLightIntensity(lightIntensity);
 
-            //draw
-            if (mSettings.drawPlanes.get()) {
-                mPlaneDrawer.onDraw(arCanvas);
-            }
+            mPlaneDrawer.onDraw(arCanvas);
 
             for (ARCoreObjectDrawer arCoreObjectDrawer : arCoreObjectDrawerList) {
                 arCoreObjectDrawer.onDraw(arCanvas);
             }
         } catch (Throwable t) {
             // Avoid crashing the application due to unhandled exceptions.
-            Log.e(TAG, "Exception on the OpenGL thread", t);
+            Log.e(LOG_TAG, "Exception on the OpenGL thread", t);
         }
 
+    }
+
+    private boolean isPlaneTracked(Plane plane) {
+        return plane.getType() == Plane.Type.HORIZONTAL_UPWARD_FACING && plane.getTrackingState() == Plane.TrackingState.TRACKING;
     }
 
     private void handleTaps(Frame frame) throws NotTrackingException {
@@ -162,18 +148,11 @@ public class ARCoreRenderer implements GLSurfaceView.Renderer {
                 if (hit instanceof PlaneHitResult && ((PlaneHitResult) hit).isHitInPolygon()) {
 
                     if (currentARCoreObjectDrawer != null) {
-                        currentARCoreObjectDrawer.addPlaneAttachment((PlaneHitResult) hit, mArcoreSession);
+                        currentARCoreObjectDrawer.addPlaneAttachment((PlaneHitResult) hit, mARCoreSession);
                     }
-
                     // Hits are sorted by depth. Consider only closest hit on a plane.
                     break;
                 }
-                /*else if(hit instanceof PointCloudHitResult){
-                    mClickedCloudPositions.add(new CloudAttachment(
-                            ((PointCloudHitResult) hit).getPointCloudPose(),
-                            ((PointCloudHitResult) hit).getPointCloud(),
-                            mArcoreSession.addAnchor(hit.getHitPose())));
-                }*/
             }
         }
     }
@@ -212,6 +191,12 @@ public class ARCoreRenderer implements GLSurfaceView.Renderer {
         }
     }
 
+    public void onClearScreen() {
+        for (ARCoreObjectDrawer objectDrawer : arCoreObjectDrawerList) {
+            mARCoreSession.removeAnchors(objectDrawer.getAnchors());
+            objectDrawer.clearList();
+        }
+    }
 
     public interface Listener {
         void hideLoading();
