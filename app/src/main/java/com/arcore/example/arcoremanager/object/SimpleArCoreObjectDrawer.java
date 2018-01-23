@@ -6,7 +6,7 @@ import android.util.Log;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.PlaneHitResult;
 import com.google.ar.core.Session;
-import com.arcore.example.core.ARCanvas;
+import com.arcore.example.core.FrameSettings;
 import com.arcore.example.core.rendering.ObjectRenderer;
 import com.arcore.example.core.rendering.PlaneAttachment;
 import com.google.ar.core.exceptions.NotTrackingException;
@@ -27,12 +27,12 @@ public class SimpleArCoreObjectDrawer implements ARCoreObjectDrawer {
     protected final ObjectRenderer objectRenderer = new ObjectRenderer();
     // Temporary matrix allocated here to reduce number of allocations for each frame.
     protected final float[] mAnchorMatrix = new float[16];
-    private final String objFile;
-    private final String objTextureAsset;
+    private final String mObjFile;
+    private final String mObjTextureAsset;
 
     public SimpleArCoreObjectDrawer(String objFile, String objTextureAsset) {
-        this.objFile = objFile;
-        this.objTextureAsset = objTextureAsset;
+        this.mObjFile = objFile;
+        this.mObjTextureAsset = objTextureAsset;
     }
 
     @Override
@@ -91,10 +91,10 @@ public class SimpleArCoreObjectDrawer implements ARCoreObjectDrawer {
     }
 
     @Override
-    public void onDraw(ARCanvas arCanvas) {
+    public void onDraw(FrameSettings arCanvas) {
         // Visualize anchors created by touch.
         for (ArCoreObject arCoreObject : positions) {
-            if (!arCoreObject.getPlaneAttachment().isTracking()) {
+            if (!arCoreObject.isTracking()) {
                 continue;
             }
 
@@ -102,7 +102,7 @@ public class SimpleArCoreObjectDrawer implements ARCoreObjectDrawer {
         }
     }
 
-    protected void drawObject(ARCanvas arCanvas, ArCoreObject arCoreObject) {
+    protected void drawObject(FrameSettings arCanvas, ArCoreObject arCoreObject) {
         // Get the current combined pose of an Anchor and Plane in world space. The Anchor
         // and Plane poses are updated during calls to session.update() as ARCore refines
         // its estimate of the world.
@@ -117,7 +117,7 @@ public class SimpleArCoreObjectDrawer implements ARCoreObjectDrawer {
     public void prepare(Context context) {
         // Prepare the other rendering objects.
         try {
-            objectRenderer.createOnGlThread(/*context=*/context, objFile, objTextureAsset);
+            objectRenderer.createOnGlThread(/*context=*/context, mObjFile, mObjTextureAsset);
             objectRenderer.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f);
         } catch (IOException e) {
             Log.e(TAG, "Failed to read obj file");

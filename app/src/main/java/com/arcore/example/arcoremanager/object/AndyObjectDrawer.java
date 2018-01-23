@@ -3,36 +3,31 @@ package com.arcore.example.arcoremanager.object;
 import android.content.Context;
 import android.util.Log;
 
-import com.arcore.example.core.ARCanvas;
+import com.arcore.example.core.FrameSettings;
 import com.arcore.example.core.rendering.ObjectRenderer;
 
 import java.io.IOException;
 
-//We will draw bugdroids on each clicked positions
-public class BugDroidArCoreObjectDrawer extends SimpleArCoreObjectDrawer {
+public class AndyObjectDrawer extends SimpleArCoreObjectDrawer {
 
-    private static final String TAG = "BugDroidArCoreObjectDrawer";
-
-    //(on super) the droid
-    //his shadow
+    private static final String TAG = "AndyObjectDrawer";
     private final ObjectRenderer androidObjectShadow = new ObjectRenderer();
 
-    public BugDroidArCoreObjectDrawer() {
+    public AndyObjectDrawer() {
         super("andy.obj", "andy.png");
     }
 
-
     @Override
-    public void onDraw(ARCanvas canvas) {
+    public void onDraw(FrameSettings canvas) {
         // Visualize anchors created by touch.
         for (ArCoreObject bugDroid : positions) {
-            if (!bugDroid.getPlaneAttachment().isTracking()) {
+            if (!bugDroid.isTracking()) {
                 continue;
             }
             // Get the current combined pose of an Anchor and Plane in world space. The Anchor
             // and Plane poses are updated during calls to session.update() as ARCore refines
             // its estimate of the world.
-            bugDroid.getPlaneAttachment().getPose().toMatrix(mAnchorMatrix, 0);
+            bugDroid.toMatrix(mAnchorMatrix, 0);
 
             // Update and draw the model and its shadow.
             super.objectRenderer.updateModelMatrix(mAnchorMatrix, bugDroid.getScale(), bugDroid.getRotation(), bugDroid.getTranslationX(), bugDroid.getTranslationZ());
@@ -47,8 +42,7 @@ public class BugDroidArCoreObjectDrawer extends SimpleArCoreObjectDrawer {
         super.prepare(context); //draw the droid on super
         // Prepare the other rendering objects.
         try {
-            androidObjectShadow.createOnGlThread(/*context=*/context,
-                    "andy_shadow.obj", "andy_shadow.png");
+            androidObjectShadow.createOnGlThread(/*context=*/context, "andy_shadow.obj", "andy_shadow.png");
             androidObjectShadow.setBlendMode(ObjectRenderer.BlendMode.Shadow);
             androidObjectShadow.setMaterialProperties(1.0f, 0.0f, 0.0f, 1.0f);
         } catch (IOException e) {

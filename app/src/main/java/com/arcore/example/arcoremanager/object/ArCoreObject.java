@@ -5,7 +5,7 @@ import com.arcore.example.core.rendering.PlaneAttachment;
 
 public class ArCoreObject {
     private final PlaneAttachment planeAttachment;
-    private boolean mIsAnimateAppereance;
+    private boolean mIsAnimateAppearance;
     private float scale;
     private float rotation;
     private float translationX;
@@ -20,8 +20,8 @@ public class ArCoreObject {
 
     public ArCoreObject(PlaneAttachment planeAttachment, boolean needAnimate) {
         this.planeAttachment = planeAttachment;
-        mIsAnimateAppereance = needAnimate;
-        if (mIsAnimateAppereance) {
+        mIsAnimateAppearance = needAnimate;
+        if (mIsAnimateAppearance) {
             translationZ -= DELTA_Z;
             translationX += DELTA_X;
         }
@@ -58,7 +58,7 @@ public class ArCoreObject {
     }
 
     public float getTranslationX() {
-        if (mIsAnimateAppereance) {
+        if (mIsAnimateAppearance) {
             mCurrentFrame++;
             return translationX -= DELTA_X / CAMERA_MAX_FRAMES;
         } else {
@@ -67,14 +67,26 @@ public class ArCoreObject {
     }
 
     public float getTranslationZ() {
-        if (mIsAnimateAppereance) {
+        if (mIsAnimateAppearance) {
             mCurrentFrame++;
-            if (mCurrentFrame >= MAX_FRAMES) {
-                mIsAnimateAppereance = false;
-            }
+            checkFrames();
             return translationZ += DELTA_Z / CAMERA_MAX_FRAMES;
         } else {
             return translationZ;
         }
+    }
+
+    private void checkFrames() {
+        if (mCurrentFrame >= MAX_FRAMES) {
+            mIsAnimateAppearance = false;
+        }
+    }
+
+    public boolean isTracking() {
+        return planeAttachment.isTracking();
+    }
+
+    public void toMatrix(float[] anchorMatrix, int startIndex) {
+        planeAttachment.getPose().toMatrix(anchorMatrix, startIndex);
     }
 }

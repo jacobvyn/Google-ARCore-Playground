@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.ar.core.Session;
-import com.arcore.example.core.ARCanvas;
+import com.arcore.example.core.FrameSettings;
 import com.arcore.example.core.rendering.PlaneRenderer;
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class PlaneDrawer implements Drawer {
     }
 
     @Override
-    public void onDraw(ARCanvas arCanvas) {
-        plane.drawPlanes(mArCoreSession.getAllPlanes(), arCanvas.getArcoreFrame().getPose(), arCanvas.getProjMatrix());
+    public void onDraw(FrameSettings arCanvas) {
+        plane.drawPlanes(mArCoreSession.getAllPlanes(), arCanvas.getARCoreFrame().getPose(), arCanvas.getProjMatrix());
     }
 }

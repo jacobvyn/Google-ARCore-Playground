@@ -15,7 +15,7 @@ import com.google.ar.core.Session;
 import com.arcore.example.arcoremanager.drawer.BackgroundDrawer;
 import com.arcore.example.arcoremanager.drawer.PlaneDrawer;
 import com.arcore.example.arcoremanager.object.ARCoreObjectDrawer;
-import com.arcore.example.core.ARCanvas;
+import com.arcore.example.core.FrameSettings;
 import com.arcore.example.core.AppSettings;
 import com.google.ar.core.exceptions.NotTrackingException;
 
@@ -39,7 +39,7 @@ public class ARCoreRenderer implements GLSurfaceView.Renderer {
     private ARCoreObjectDrawer currentARCoreObjectDrawer = null;
     @Nullable
     private Listener mListener;
-    private final ARCanvas arCanvas = new ARCanvas();
+    private final FrameSettings mFrameSettings = new FrameSettings();
 
     public ARCoreRenderer(Context context, Session arCoreSession) {
         this.mContext = context;
@@ -66,8 +66,8 @@ public class ARCoreRenderer implements GLSurfaceView.Renderer {
         // the video background can be properly adjusted.
         mARCoreSession.setDisplayGeometry(width, height);
 
-        arCanvas.setWidth(width);
-        arCanvas.setHeight(height);
+        mFrameSettings.setWidth(width);
+        mFrameSettings.setHeight(height);
     }
 
     @Override
@@ -95,10 +95,10 @@ public class ARCoreRenderer implements GLSurfaceView.Renderer {
             // compared to arcoreFrame rate.
             handleTaps(arcoreFrame);
 
-            arCanvas.setArcoreFrame(arcoreFrame);
+            mFrameSettings.setARCoreFrame(arcoreFrame);
 
             // Draw background.
-            mBackgroundDrawer.onDraw(arCanvas);
+            mBackgroundDrawer.onDraw(mFrameSettings);
 
             // If not tracking, don't draw 3d objects.
             if (arcoreFrame.getTrackingState() == Frame.TrackingState.NOT_TRACKING) {
@@ -118,14 +118,14 @@ public class ARCoreRenderer implements GLSurfaceView.Renderer {
             // Compute lighting from average intensity of the image.
             final float lightIntensity = arcoreFrame.getLightEstimate().getPixelIntensity();
 
-            arCanvas.setProjMatrix(projMatrix);
-            arCanvas.setCameraMatrix(cameraMatrix);
-            arCanvas.setLightIntensity(lightIntensity);
+            mFrameSettings.setProjMatrix(projMatrix);
+            mFrameSettings.setCameraMatrix(cameraMatrix);
+            mFrameSettings.setLightIntensity(lightIntensity);
 
-            mPlaneDrawer.onDraw(arCanvas);
+            mPlaneDrawer.onDraw(mFrameSettings);
 
             for (ARCoreObjectDrawer arCoreObjectDrawer : arCoreObjectDrawerList) {
-                arCoreObjectDrawer.onDraw(arCanvas);
+                arCoreObjectDrawer.onDraw(mFrameSettings);
             }
         } catch (Throwable t) {
             // Avoid crashing the application due to unhandled exceptions.

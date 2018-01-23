@@ -26,7 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arcore.example.arcoremanager.ArCoreManager;
-import com.arcore.example.arcoremanager.object.BugDroidArCoreObjectDrawer;
+import com.arcore.example.arcoremanager.object.AndyObjectDrawer;
 import com.arcore.example.settings.ObjectSettings;
 
 import butterknife.BindView;
@@ -43,13 +43,13 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.surfaceview)
     GLSurfaceView mSurfaceView;
 
-    private ArCoreManager arCoreManager;
+    private ArCoreManager mARCoreManager;
 
     @BindView(R.id.message)
-    TextView message;
+    TextView mMessage;
 
     @BindView(R.id.configLocal)
-    ViewGroup configLocal;
+    ViewGroup mConfigLocal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +59,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void init() {
-        if (arCoreManager != null) {
+        if (mARCoreManager != null) {
             return;
         }
-        arCoreManager = new ArCoreManager(this, new ArCoreManager.Listener() {
+        mARCoreManager = new ArCoreManager(this, new ArCoreManager.Listener() {
             @Override
             public void onArCoreUnsupported() {
                 Toast.makeText(MainActivity.this, "This device does not support AR", Toast.LENGTH_LONG).show();
@@ -80,30 +80,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void showLoadingMessage() {
                 runOnUiThread(() -> {
-                    message.setText("Searching for surfaces...");
-                    message.animate().alpha(1f);
+                    mMessage.setText("Searching for surfaces...");
+                    mMessage.animate().alpha(1f);
                 });
             }
 
             @Override
             public void hideLoadingMessage() {
                 runOnUiThread(() -> {
-                    message.animate().alpha(0f);
+                    mMessage.animate().alpha(0f);
                 });
             }
         });
-        arCoreManager.setup(mSurfaceView);
-        arCoreManager.addObjectToDraw(new BugDroidArCoreObjectDrawer());
+        mARCoreManager.setup(mSurfaceView);
+        mARCoreManager.addObjectToDraw(new AndyObjectDrawer());
 
-        configLocal.addView(new ObjectSettings(this, new ObjectSettings.Listener() {
+        mConfigLocal.addView(new ObjectSettings(this, new ObjectSettings.Listener() {
             @Override
             public void onTouchModeChanged(ArCoreManager.ObjectTouchMode objectTouchMode) {
-                arCoreManager.setTouchMode(objectTouchMode);
+                mARCoreManager.setTouchMode(objectTouchMode);
             }
 
             @Override
             public void onClearScreen() {
-                arCoreManager.onClearScreen();
+                mARCoreManager.onClearScreen();
             }
         }));
     }
@@ -111,8 +111,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
         if (!PermissionHelper.hasCameraPermission(this)) {
-            Toast.makeText(this,
-                    "Camera permission is needed to run this application", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Camera permission is needed to run this application", Toast.LENGTH_LONG).show();
             finish();
         }
     }
