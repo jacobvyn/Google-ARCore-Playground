@@ -6,10 +6,11 @@ import com.arcore.example.core.rendering.PlaneAttachment;
 public class ArCoreObject {
     private final PlaneAttachment planeAttachment;
     private boolean mIsAnimateAppearance;
-    private float scale;
-    private float rotation;
-    private float translationX;
-    private float translationZ;
+    private float mScale;
+    private float mRotationY;
+    private float mRotationZ;
+    private float mTranslationX;
+    private float mTranslationZ;
 
     private final static float DELTA_Z = 10f;
     private final static float DELTA_X = 4f;
@@ -22,10 +23,10 @@ public class ArCoreObject {
         this.planeAttachment = planeAttachment;
         mIsAnimateAppearance = needAnimate;
         if (mIsAnimateAppearance) {
-            translationZ -= DELTA_Z;
-            translationX += DELTA_X;
+            mTranslationZ -= DELTA_Z;
+            mTranslationX += DELTA_X;
         }
-        this.scale = 1f;
+        this.mScale = 1f;
     }
 
     public Anchor getAnchor() {
@@ -37,32 +38,32 @@ public class ArCoreObject {
     }
 
     public float getScale() {
-        return scale;
+        return mScale;
     }
 
     public void setScale(float scale) {
-        this.scale = scale;
+        this.mScale = scale;
     }
 
     public void setRotation(float angle) {
-        this.rotation = angle;
+        this.mRotationY = angle;
     }
 
-    public float getRotation() {
-        return rotation;
+    public float getRotationY() {
+        return mRotationY;
     }
 
     public void setTranslation(float distanceX, float distanceZ) {
-        translationX += distanceX;
-        translationZ += distanceZ;
+        mTranslationX += distanceX;
+        mTranslationZ += distanceZ;
     }
 
     public float getTranslationX() {
         if (mIsAnimateAppearance) {
             mCurrentFrame++;
-            return translationX -= DELTA_X / CAMERA_MAX_FRAMES;
+            return mTranslationX -= DELTA_X / CAMERA_MAX_FRAMES;
         } else {
-            return translationX;
+            return mTranslationX;
         }
     }
 
@@ -70,9 +71,9 @@ public class ArCoreObject {
         if (mIsAnimateAppearance) {
             mCurrentFrame++;
             checkFrames();
-            return translationZ += DELTA_Z / CAMERA_MAX_FRAMES;
+            return mTranslationZ += DELTA_Z / CAMERA_MAX_FRAMES;
         } else {
-            return translationZ;
+            return mTranslationZ;
         }
     }
 
@@ -86,7 +87,15 @@ public class ArCoreObject {
         return planeAttachment.isTracking();
     }
 
-    public void toMatrix(float[] anchorMatrix, int startIndex) {
-        planeAttachment.getPose().toMatrix(anchorMatrix, startIndex);
+    public void toMatrix(float[] anchorMatrix) {
+        planeAttachment.getPose().toMatrix(anchorMatrix, 0);
+    }
+
+    public float getRotationZ() {
+        return mRotationZ;
+    }
+
+    public void setRotationZ(float mRotationZ) {
+        this.mRotationZ = mRotationZ;
     }
 }

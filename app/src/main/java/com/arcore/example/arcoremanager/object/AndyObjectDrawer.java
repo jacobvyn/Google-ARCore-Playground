@@ -4,21 +4,22 @@ import android.content.Context;
 import android.util.Log;
 
 import com.arcore.example.core.FrameSettings;
+import com.arcore.example.core.rendering.ComplexObjectRenderer;
 import com.arcore.example.core.rendering.ObjectRenderer;
 
 import java.io.IOException;
 
 public class AndyObjectDrawer extends SimpleArCoreObjectDrawer {
-
     private static final String TAG = "AndyObjectDrawer";
-    private final ObjectRenderer androidObjectShadow = new ObjectRenderer();
+    private final ComplexObjectRenderer androidObjectShadow = new ComplexObjectRenderer();
 
     public AndyObjectDrawer() {
         super("andy.obj", "andy.png");
+        setParentDirectory("");
     }
 
     @Override
-    public void onDraw(FrameSettings canvas) {
+    public void onDraw(FrameSettings settings) {
         // Visualize anchors created by touch.
         for (ArCoreObject bugDroid : positions) {
             if (!bugDroid.isTracking()) {
@@ -27,13 +28,13 @@ public class AndyObjectDrawer extends SimpleArCoreObjectDrawer {
             // Get the current combined pose of an Anchor and Plane in world space. The Anchor
             // and Plane poses are updated during calls to session.update() as ARCore refines
             // its estimate of the world.
-            bugDroid.toMatrix(mAnchorMatrix, 0);
+            bugDroid.toMatrix(mAnchorMatrix);
 
             // Update and draw the model and its shadow.
-            super.objectRenderer.updateModelMatrix(mAnchorMatrix, bugDroid.getScale(), bugDroid.getRotation(), bugDroid.getTranslationX(), bugDroid.getTranslationZ());
-            androidObjectShadow.updateModelMatrix(mAnchorMatrix, bugDroid.getScale(), bugDroid.getRotation(), bugDroid.getTranslationX(), bugDroid.getTranslationZ());
-            super.objectRenderer.draw(canvas.getCameraMatrix(), canvas.getProjMatrix(), canvas.getLightIntensity());
-            androidObjectShadow.draw(canvas.getCameraMatrix(), canvas.getProjMatrix(), canvas.getLightIntensity());
+            super.objectRenderer.updateModelMatrix(mAnchorMatrix, bugDroid.getScale(), bugDroid.getRotationY(), bugDroid.getRotationZ(), bugDroid.getTranslationX(), bugDroid.getTranslationZ());
+            androidObjectShadow.updateModelMatrix(mAnchorMatrix, bugDroid.getScale(), bugDroid.getRotationY(), bugDroid.getRotationZ(), bugDroid.getTranslationX(), bugDroid.getTranslationZ());
+            super.objectRenderer.draw(settings.getCameraMatrix(), settings.getProjMatrix(), settings.getLightIntensity());
+            androidObjectShadow.draw(settings.getCameraMatrix(), settings.getProjMatrix(), settings.getLightIntensity());
         }
     }
 
@@ -46,6 +47,7 @@ public class AndyObjectDrawer extends SimpleArCoreObjectDrawer {
             androidObjectShadow.setBlendMode(ObjectRenderer.BlendMode.Shadow);
             androidObjectShadow.setMaterialProperties(1.0f, 0.0f, 0.0f, 1.0f);
         } catch (IOException e) {
+            e.printStackTrace();
             Log.e(TAG, "Failed to read obj file");
         }
     }

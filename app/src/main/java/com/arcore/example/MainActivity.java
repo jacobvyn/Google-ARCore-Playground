@@ -26,7 +26,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arcore.example.arcoremanager.ArCoreManager;
-import com.arcore.example.arcoremanager.object.AndyObjectDrawer;
+import com.arcore.example.arcoremanager.object.FerrariObjectDrawer;
+import com.arcore.example.compass.BaseCompassSensor;
+import com.arcore.example.compass.CompassViewLM;
+import com.arcore.example.compass.CustomCompassSensor;
+import com.arcore.example.compass.GoogleCompassSensor;
 import com.arcore.example.settings.ObjectSettings;
 
 import butterknife.BindView;
@@ -37,7 +41,7 @@ import butterknife.ButterKnife;
  * the ARCore API. The application will display any detected planes and will allow the user to
  * tap on a plane to place a 3d model of the Android robot.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ArCoreManager.Listener, ObjectSettings.Listener {
 
     // Rendering. The Renderers are created here, and initialized when the GL surface is created.
     @BindView(R.id.surfaceview)
@@ -46,10 +50,15 @@ public class MainActivity extends AppCompatActivity {
     private ArCoreManager mARCoreManager;
 
     @BindView(R.id.message)
-    TextView mMessage;
+    protected TextView mMessage;
 
     @BindView(R.id.configLocal)
-    ViewGroup mConfigLocal;
+    protected ViewGroup mConfigLocal;
+
+    @BindView(R.id.compass_view)
+    protected CompassViewLM mCompassView;
+
+    protected BaseCompassSensor mCompassSensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,53 +68,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void init() {
-        if (mARCoreManager != null) {
-            return;
+        if (mARCoreManager == null) {
+            mCompassSensor = new GoogleCompassSensor(mCompassView, this);
+            mARCoreManager = new ArCoreManager(this, this);
+            mARCoreManager.setup(mSurfaceView);
+            mARCoreManager.addObjectToDraw(new FerrariObjectDrawer());
+            mConfigLocal.addView(new ObjectSettings(this, this));
         }
-        mARCoreManager = new ArCoreManager(this, new ArCoreManager.Listener() {
-            @Override
-            public void onArCoreUnsupported() {
-                Toast.makeText(MainActivity.this, "This device does not support AR", Toast.LENGTH_LONG).show();
-                finish();
-            }
-
-            @Override
-            public void onPermissionNotAllowed() {
-                //on permission not allowed
-                Toast.makeText(MainActivity.this,
-                        "Camera permission is needed to run this application", Toast.LENGTH_LONG).show();
-                finish();
-            }
-
-            @Override
-            public void showLoadingMessage() {
-                runOnUiThread(() -> {
-                    mMessage.setText("Searching for surfaces...");
-                    mMessage.animate().alpha(1f);
-                });
-            }
-
-            @Override
-            public void hideLoadingMessage() {
-                runOnUiThread(() -> {
-                    mMessage.animate().alpha(0f);
-                });
-            }
-        });
-        mARCoreManager.setup(mSurfaceView);
-        mARCoreManager.addObjectToDraw(new AndyObjectDrawer());
-
-        mConfigLocal.addView(new ObjectSettings(this, new ObjectSettings.Listener() {
-            @Override
-            public void onTouchModeChanged(ArCoreManager.ObjectTouchMode objectTouchMode) {
-                mARCoreManager.setTouchMode(objectTouchMode);
-            }
-
-            @Override
-            public void onClearScreen() {
-                mARCoreManager.onClearScreen();
-            }
-        }));
     }
 
     @Override
@@ -140,5 +109,43 @@ public class MainActivity extends AppCompatActivity {
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+    }
+
+    @Override
+    public void onArCoreUnsupported() {
+        Toast.makeText(MainActivity.this, "This device does not support AR", Toast.LENGTH_LONG).show();
+        finish();
+    }
+
+    @Override
+    public void onPermissionNotAllowed() {
+        //on permission not allowed
+        Toast.makeText(MainActivity.this, "Camera permission is needed to run this application", Toast.LENGTH_LONG).show();
+        finish();
+    }
+
+    @Override
+    public void showLoadingMessage() {
+        runOnUiThread(() -> {
+            mMessage.setText("Searching for surfaces...");
+            mMessage.animate().alpha(1f);
+        });
+    }
+
+    @Override
+    public void hideLoadingMessage() {
+        runOnUiThread(() -> {
+            mMessage.setVisibility(View.GONE);
+        });
+    }
+
+    @Override
+    public void onTouchModeChanged(ArCoreManager.ObjectTouchMode objectTouchMode) {
+        mARCoreManager.setTouchMode(objectTouchMode);
+    }
+
+    @Override
+    public void onClearScreen() {
+        mARCoreManager.onClearScreen();
     }
 }

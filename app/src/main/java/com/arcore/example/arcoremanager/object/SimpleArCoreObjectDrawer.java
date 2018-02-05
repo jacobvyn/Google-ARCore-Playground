@@ -3,11 +3,11 @@ package com.arcore.example.arcoremanager.object;
 import android.content.Context;
 import android.util.Log;
 
+import com.arcore.example.core.rendering.ComplexObjectRenderer;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.PlaneHitResult;
 import com.google.ar.core.Session;
 import com.arcore.example.core.FrameSettings;
-import com.arcore.example.core.rendering.ObjectRenderer;
 import com.arcore.example.core.rendering.PlaneAttachment;
 import com.google.ar.core.exceptions.NotTrackingException;
 
@@ -19,20 +19,30 @@ import java.util.List;
 
 public class SimpleArCoreObjectDrawer implements ARCoreObjectDrawer {
 
-    private static final String TAG = "SimpleArCoreObjectDrawer";
+    private static final String TAG = SimpleArCoreObjectDrawer.class.getSimpleName();
 
     public final List<ArCoreObject> positions = new ArrayList<>();
     private final int MAX_OBJECTS_ON_SCREEN = 10;
     //the 3D object
-    protected final ObjectRenderer objectRenderer = new ObjectRenderer();
+    protected final ComplexObjectRenderer objectRenderer = new ComplexObjectRenderer();
     // Temporary matrix allocated here to reduce number of allocations for each frame.
     protected final float[] mAnchorMatrix = new float[16];
     private final String mObjFile;
     private final String mObjTextureAsset;
+    private float mRotationZ;
 
     public SimpleArCoreObjectDrawer(String objFile, String objTextureAsset) {
         this.mObjFile = objFile;
         this.mObjTextureAsset = objTextureAsset;
+    }
+
+    public SimpleArCoreObjectDrawer(String objFile) {
+        this.mObjFile = objFile;
+        this.mObjTextureAsset = "";
+    }
+
+    protected void setParentDirectory(String parentDir) {
+        objectRenderer.setParentDirectory(parentDir);
     }
 
     @Override
@@ -91,26 +101,26 @@ public class SimpleArCoreObjectDrawer implements ARCoreObjectDrawer {
     }
 
     @Override
-    public void onDraw(FrameSettings arCanvas) {
+    public void onDraw(FrameSettings settings) {
         // Visualize anchors created by touch.
         for (ArCoreObject arCoreObject : positions) {
             if (!arCoreObject.isTracking()) {
                 continue;
             }
 
-            drawObject(arCanvas, arCoreObject);
+            drawObject(settings, arCoreObject);
         }
     }
 
-    protected void drawObject(FrameSettings arCanvas, ArCoreObject arCoreObject) {
+    protected void drawObject(FrameSettings settings, ArCoreObject arCoreObject) {
         // Get the current combined pose of an Anchor and Plane in world space. The Anchor
         // and Plane poses are updated during calls to session.update() as ARCore refines
         // its estimate of the world.
         arCoreObject.getPlaneAttachment().getPose().toMatrix(mAnchorMatrix, 0);
 
         // Update and draw the model and its shadow.
-        objectRenderer.updateModelMatrix(mAnchorMatrix, arCoreObject.getScale(), arCoreObject.getRotation(), arCoreObject.getTranslationX(), arCoreObject.getTranslationZ());
-        objectRenderer.draw(arCanvas.getCameraMatrix(), arCanvas.getProjMatrix(), arCanvas.getLightIntensity());
+        objectRenderer.updateModelMatrix(mAnchorMatrix, arCoreObject.getScale(), arCoreObject.getRotationY(), arCoreObject.getRotationZ(), arCoreObject.getTranslationX(), arCoreObject.getTranslationZ());
+        objectRenderer.draw(settings.getCameraMatrix(), settings.getProjMatrix(), settings.getLightIntensity());
     }
 
     @Override
@@ -120,7 +130,17 @@ public class SimpleArCoreObjectDrawer implements ARCoreObjectDrawer {
             objectRenderer.createOnGlThread(/*context=*/context, mObjFile, mObjTextureAsset);
             objectRenderer.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f);
         } catch (IOException e) {
+            e.printStackTrace();
             Log.e(TAG, "Failed to read obj file");
         }
     }
+
+    protected float getRotationZ() {
+        return mRotationZ;
+    }
+
+    protected void setRotationZ(float rotationZ) {
+        this.mRotationZ = rotationZ;
+    }
+
 }

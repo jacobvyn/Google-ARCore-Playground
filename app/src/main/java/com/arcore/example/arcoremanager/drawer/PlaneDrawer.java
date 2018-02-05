@@ -27,6 +27,7 @@ public class PlaneDrawer implements Drawer {
         try {
             plane.createOnGlThread(/*context=*/context, "trigrid.png");
         } catch (IOException e) {
+            e.printStackTrace();
             Log.e(TAG, "Failed to read plane texture");
         }
     }

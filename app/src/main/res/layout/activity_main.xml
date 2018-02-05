@@ -17,6 +17,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <android.opengl.GLSurfaceView
         android:id="@+id/surfaceview"
         android:layout_width="match_parent"
@@ -41,6 +42,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
-
     </FrameLayout>
+
+    <com.arcore.example.compass.CompassViewLM
+        android:id="@+id/compass_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true" />
 </RelativeLayout>

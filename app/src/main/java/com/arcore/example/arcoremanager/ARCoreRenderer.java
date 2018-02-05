@@ -128,6 +128,7 @@ public class ARCoreRenderer implements GLSurfaceView.Renderer {
                 arCoreObjectDrawer.onDraw(mFrameSettings);
             }
         } catch (Throwable t) {
+            t.printStackTrace();
             // Avoid crashing the application due to unhandled exceptions.
             Log.e(LOG_TAG, "Exception on the OpenGL thread", t);
         }
