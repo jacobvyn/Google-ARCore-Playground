@@ -29,12 +29,13 @@ import com.arcore.example.arcoremanager.ArCoreManager;
 import com.arcore.example.arcoremanager.object.FerrariObjectDrawer;
 import com.arcore.example.compass.BaseCompassSensor;
 import com.arcore.example.compass.CompassViewLM;
-import com.arcore.example.compass.CustomCompassSensor;
-import com.arcore.example.compass.GoogleCompassSensor;
+import com.arcore.example.compass.CompassViewTest;
+import com.arcore.example.compass.GitCompassSensor;
 import com.arcore.example.settings.ObjectSettings;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * This is a simple example that shows how to create an augmented reality (AR) application using
@@ -58,7 +59,11 @@ public class MainActivity extends AppCompatActivity implements ArCoreManager.Lis
     @BindView(R.id.compass_view)
     protected CompassViewLM mCompassView;
 
+//    @BindView(R.id.compass_view_test)
+//    protected CompassViewTest mCompassViewTest;
+
     protected BaseCompassSensor mCompassSensor;
+    private float mAzimuth = 130;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +72,16 @@ public class MainActivity extends AppCompatActivity implements ArCoreManager.Lis
         ButterKnife.bind(this);
     }
 
+//    @OnClick(R.id.compass_view_test)
+//    public void rotate() {
+//        mAzimuth = (mAzimuth + 123) % 360;
+//        mCompassViewTest.onAzimuthChanged(mAzimuth);
+//    }
+
     public void init() {
         if (mARCoreManager == null) {
-            mCompassSensor = new GoogleCompassSensor(mCompassView, this);
+//            mCompassSensor = new GitCompassSensor(mCompassView, this);
+
             mARCoreManager = new ArCoreManager(this, this);
             mARCoreManager.setup(mSurfaceView);
             mARCoreManager.addObjectToDraw(new FerrariObjectDrawer());
@@ -79,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements ArCoreManager.Lis
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
-        if (!PermissionHelper.hasCameraPermission(this)) {
+        if (!PermissionHelper.hasPermission(this)) {
             Toast.makeText(this, "Camera permission is needed to run this application", Toast.LENGTH_LONG).show();
             finish();
         }
@@ -88,10 +100,10 @@ public class MainActivity extends AppCompatActivity implements ArCoreManager.Lis
     @Override
     public void onResume() {
         super.onResume();
-        if (PermissionHelper.hasCameraPermission(this)) {
+        if (PermissionHelper.hasPermission(this)) {
             init();
         } else {
-            PermissionHelper.requestCameraPermission(this);
+            PermissionHelper.requestPermission(this);
         }
     }
 

@@ -13,18 +13,23 @@ public abstract class BaseCompassSensor implements SensorEventListener {
 
     private OnAzimuthListener mListener;
     private SensorManager mSensorManager;
+    private AppCompatActivity mActivity;
 
 
     public BaseCompassSensor(OnAzimuthListener listener, AppCompatActivity activity) {
         mListener = listener;
         mSensorManager = (SensorManager) (activity.getSystemService(Context.SENSOR_SERVICE));
+        mActivity = activity;
         subscribeOnLifeCycleEvents(activity);
     }
 
     private void subscribeOnLifeCycleEvents(AppCompatActivity activity) {
         RxLifecycle.with(activity)
                 .onResume()
-                .subscribe(event -> onResume(), throwable -> {
+                .subscribe(event -> {
+                    onResume();
+                }, throwable -> {
+                    throwable.printStackTrace();
                     Log.e("++++++", throwable.getMessage());
                 });
 
@@ -48,5 +53,9 @@ public abstract class BaseCompassSensor implements SensorEventListener {
 
     protected SensorManager getSensorManager() {
         return mSensorManager;
+    }
+
+    public AppCompatActivity getActivity() {
+        return mActivity;
     }
 }

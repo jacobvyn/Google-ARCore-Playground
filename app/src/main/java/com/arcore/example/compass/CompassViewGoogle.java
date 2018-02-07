@@ -17,7 +17,7 @@ import android.view.animation.LinearInterpolator;
 import com.arcore.example.R;
 import com.arcore.example.compass.custom.MathUtils;
 
-public class CompassViewGoogle extends View implements OnAzimuthListener, GoogleOrientationManager.OnChangedListener {
+public class CompassViewGoogle extends View implements OnAzimuthListener {
 
     private static final double BITMAP_SCALE_FACTOR = 0.25;
     private static final double SCALE_FACTOR = 1.3;
@@ -191,19 +191,19 @@ public class CompassViewGoogle extends View implements OnAzimuthListener, Google
         animateTo(mHeading);
 //        setAzimuth(newAzimuth);
     }
-
-    @Override
-    public void onOrientationChanged(GoogleOrientationManager orientationManager) {
-        onAzimuthChanged(orientationManager.getHeading());
-    }
-
-    @Override
-    public void onLocationChanged(GoogleOrientationManager orientationManager) {
-
-    }
-    @Override
-    public void onAccuracyChanged(GoogleOrientationManager orientationManager) {
-
-    }
+//
+//    @Override
+//    public void onAzimuthChanged(GoogleCompassSensor orientationManager) {
+//        onAzimuthChanged(orientationManager.getHeading());
+//    }
+//
+//    @Override
+//    public void onLocationChanged(GoogleCompassSensor orientationManager) {
+//
+//    }
+//    @Override
+//    public void onAccuracyChanged(GoogleCompassSensor orientationManager) {
+//
+//    }
 
 }

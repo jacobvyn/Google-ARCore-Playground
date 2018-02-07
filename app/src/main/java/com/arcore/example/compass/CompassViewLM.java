@@ -12,7 +12,7 @@ import android.view.View;
 
 import com.arcore.example.R;
 
-public class CompassViewLM extends View implements OnAzimuthListener, GoogleOrientationManager.OnChangedListener {
+public class CompassViewLM extends View implements OnAzimuthListener {
 
     private static final double BITMAP_SCALE_FACTOR = 0.25;
     private static final double SCALE_FACTOR = 1.3;
@@ -97,20 +97,5 @@ public class CompassViewLM extends View implements OnAzimuthListener, GoogleOrie
     @Override
     public void onAzimuthChanged(float newAzimuth) {
         setAzimuth(newAzimuth);
-    }
-
-    @Override
-    public void onOrientationChanged(GoogleOrientationManager orientationManager) {
-        setAzimuth(orientationManager.getHeading());
-    }
-
-    @Override
-    public void onLocationChanged(GoogleOrientationManager orientationManager) {
-
-    }
-
-    @Override
-    public void onAccuracyChanged(GoogleOrientationManager orientationManager) {
-
     }
 }

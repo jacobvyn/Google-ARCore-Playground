@@ -14,8 +14,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class CustomCompassSensor extends BaseCompassSensor  {
     private String LOG_TAG = CustomCompassSensor.class.getSimpleName();
 
-    private static final float grav[] = new float[3]; // Gravity (a.k.a accelerometer data)
-    private static final float mag[] = new float[3]; // Magnetic
+    private static final float gravity[] = new float[3]; // Gravity (a.k.a accelerometer data)
+    private static final float magnitude[] = new float[3]; // Magnetic
     private static final float rotation[] = new float[9]; // Rotation matrix in Android format
     private static final float orientation[] = new float[3]; // azimuth, pitch, roll
     private static float smoothed[] = new float[3];
@@ -38,22 +38,24 @@ public class CustomCompassSensor extends BaseCompassSensor  {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (!computing.compareAndSet(false, true)) return;
+        if (!computing.compareAndSet(false, true)) {
+            return;
+        }
 
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            smoothed = LowPassFilter.filter(event.values, grav);
-            grav[0] = smoothed[0];
-            grav[1] = smoothed[1];
-            grav[2] = smoothed[2];
+            smoothed = LowPassFilter.filter(event.values, gravity);
+            gravity[0] = smoothed[0];
+            gravity[1] = smoothed[1];
+            gravity[2] = smoothed[2];
         } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-            smoothed = LowPassFilter.filter(event.values, mag);
-            mag[0] = smoothed[0];
-            mag[1] = smoothed[1];
-            mag[2] = smoothed[2];
+            smoothed = LowPassFilter.filter(event.values, magnitude);
+            magnitude[0] = smoothed[0];
+            magnitude[1] = smoothed[1];
+            magnitude[2] = smoothed[2];
         }
 
         // Get rotation matrix given the gravity and geomagnetic matrices
-        SensorManager.getRotationMatrix(rotation, null, grav, mag);
+        SensorManager.getRotationMatrix(rotation, null, gravity, magnitude);
         SensorManager.getOrientation(rotation, orientation);
         floatBearing = orientation[0];
 
@@ -71,7 +73,6 @@ public class CustomCompassSensor extends BaseCompassSensor  {
         if (floatBearing < 0) {
             floatBearing += 360;
         }
-
 
 
         onAzimuthChanged((float) floatBearing);

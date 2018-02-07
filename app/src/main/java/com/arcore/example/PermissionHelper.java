@@ -24,23 +24,23 @@ import android.support.v4.content.ContextCompat;
  * Helper to ask camera permission.
  */
 public class PermissionHelper {
-  private static final String CAMERA_PERMISSION = Manifest.permission.CAMERA;
-  private static final int CAMERA_PERMISSION_CODE = 0;
+    private static final String CAMERA_PERMISSION = Manifest.permission.CAMERA;
+    private static final String ACCESS_FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final int PERMISSION_CODE = 0;
 
-  /**
-   * Check to see we have the necessary permissions for this app.
-   */
-  public static boolean hasCameraPermission(Activity activity) {
-    return ContextCompat.checkSelfPermission(activity, CAMERA_PERMISSION) ==
-            PackageManager.PERMISSION_GRANTED;
+    /**
+     * Check to see we have the necessary permissions for this app.
+     */
+    public static boolean hasPermission(Activity activity) {
+        return ContextCompat.checkSelfPermission(activity, CAMERA_PERMISSION) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(activity, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
-  }
+    }
 
-  /**
-   * Check to see we have the necessary permissions for this app, and ask for them if we don't.
-   */
-  public static void requestCameraPermission(Activity activity) {
-    ActivityCompat.requestPermissions(activity, new String[]{CAMERA_PERMISSION},
-            CAMERA_PERMISSION_CODE);
-  }
+    /**
+     * Check to see we have the necessary permissions for this app, and ask for them if we don't.
+     */
+    public static void requestPermission(Activity activity) {
+        ActivityCompat.requestPermissions(activity, new String[]{CAMERA_PERMISSION, ACCESS_FINE_LOCATION}, PERMISSION_CODE);
+    }
 }
