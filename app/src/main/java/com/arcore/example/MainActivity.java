@@ -18,7 +18,7 @@ package com.arcore.example;
 
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -29,12 +29,11 @@ import com.arcore.example.arcoremanager.ArCoreManager;
 import com.arcore.example.arcoremanager.object.FerrariObjectDrawer;
 import com.arcore.example.compass.BaseCompassSensor;
 import com.arcore.example.compass.CompassViewLM;
-import com.arcore.example.compass.CompassViewTest;
-import com.arcore.example.compass.GitCompassSensor;
 import com.arcore.example.settings.ObjectSettings;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 import butterknife.OnClick;
 
 /**

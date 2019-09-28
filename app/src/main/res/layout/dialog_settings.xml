@@ -15,7 +15,7 @@
             android:layout_centerVertical="true"
             android:text="Draw background" />
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/drawBackground"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
             android:layout_centerVertical="true"
             android:text="Draw detection dots" />
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/drawDetectionDots"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
             android:layout_centerVertical="true"
             android:text="Draw planes" />
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/drawPlanes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

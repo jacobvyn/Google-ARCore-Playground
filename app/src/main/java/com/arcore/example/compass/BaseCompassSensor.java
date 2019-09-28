@@ -3,7 +3,7 @@ package com.arcore.example.compass;
 import android.content.Context;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
 import florent37.github.com.rxlifecycle.RxLifecycle;

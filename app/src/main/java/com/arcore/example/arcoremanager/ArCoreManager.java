@@ -1,18 +1,18 @@
 package com.arcore.example.arcoremanager;
 
 import android.opengl.GLSurfaceView;
-import android.support.annotation.NonNull;
-import android.support.v4.view.GestureDetectorCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.core.view.GestureDetectorCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
-import com.google.ar.core.Config;
-import com.google.ar.core.Session;
 import com.arcore.example.RotationGestureDetector;
 import com.arcore.example.arcoremanager.object.ARCoreObjectDrawer;
+import com.google.ar.core.Config;
+import com.google.ar.core.Session;
 
 import florent37.github.com.rxlifecycle.RxLifecycle;
 
