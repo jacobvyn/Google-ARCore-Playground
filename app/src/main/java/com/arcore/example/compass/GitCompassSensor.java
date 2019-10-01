@@ -12,8 +12,8 @@ public class GitCompassSensor extends BaseCompassSensor {
     private Sensor mAccelerometer;
     private Sensor mMagnetometer;
     private static final float ALPHA = 0.97f;
-    private static final float mAccelerometerData[] = new float[3];
-    private static final float mGeomagneticData[] = new float[3];
+    private static final float[] mAccelerometerData = new float[3];
+    private static final float[] mGeomagneticData = new float[3];
 
     private float[] mRawRotationMatrix = new float[9];
     private float[] mRotationMatrix = new float[9];

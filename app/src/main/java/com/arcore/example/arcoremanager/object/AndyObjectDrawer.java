@@ -22,7 +22,7 @@ public class AndyObjectDrawer extends SimpleArCoreObjectDrawer {
     public void onDraw(FrameSettings settings) {
         // Visualize anchors created by touch.
         for (ArCoreObject bugDroid : positions) {
-            if (!bugDroid.isTracking()) {
+            if (bugDroid.isTracking()) {
                 continue;
             }
             // Get the current combined pose of an Anchor and Plane in world space. The Anchor

@@ -63,8 +63,6 @@ public class ObjectRenderer {
         Grid
     }
 
-    ;
-
     private static final int COORDS_PER_VERTEX = 3;
 
     // Note: the last component must be zero to avoid applying the translational part of the matrix.

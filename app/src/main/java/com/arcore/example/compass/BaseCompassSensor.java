@@ -26,9 +26,7 @@ public abstract class BaseCompassSensor implements SensorEventListener {
     private void subscribeOnLifeCycleEvents(AppCompatActivity activity) {
         RxLifecycle.with(activity)
                 .onResume()
-                .subscribe(event -> {
-                    onResume();
-                }, throwable -> {
+                .subscribe(event -> onResume(), throwable -> {
                     throwable.printStackTrace();
                     Log.e("++++++", throwable.getMessage());
                 });

@@ -9,14 +9,13 @@ import android.util.Log;
 public class BestPracticeCompassSensor extends BaseCompassSensor {
     private String LOG_TAG = BestPracticeCompassSensor.class.getSimpleName();
 
-    private static final float mAccelerometerReading[] = new float[3];
-    private static final float mMagnetometerReading[] = new float[3];
-    private static final float mRotationMatrix[] = new float[9];
-    private static final float mOrientationAngles[] = new float[3];
+    private static final float[] mAccelerometerReading = new float[3];
+    private static final float[] mMagnetometerReading = new float[3];
+    private static final float[] mRotationMatrix = new float[9];
+    private static final float[] mOrientationAngles = new float[3];
 
     private Sensor mAccelerometer;
     private Sensor mMagnetometer;
-
 
     public BestPracticeCompassSensor(OnAzimuthListener listener, AppCompatActivity activity) {
         super(listener, activity);

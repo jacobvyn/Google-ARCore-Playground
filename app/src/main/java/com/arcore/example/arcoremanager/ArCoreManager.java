@@ -1,5 +1,6 @@
 package com.arcore.example.arcoremanager;
 
+import android.annotation.SuppressLint;
 import android.opengl.GLSurfaceView;
 import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
@@ -32,7 +33,7 @@ public class ArCoreManager {
         this.mListener = listener;
 
         // Create default config, check is supported, create session from that config.
-        mARCoreSession = new Session(/*context=*/activity);
+        mARCoreSession = new Session(activity);
         mDefaultConfig = Config.createDefaultConfig();
 
         if (!mARCoreSession.isSupported(mDefaultConfig)) {
@@ -40,6 +41,7 @@ public class ArCoreManager {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void setup(final GLSurfaceView surfaceView) {
         mARCoreRenderer = new ARCoreRenderer(mActivity, mARCoreSession);
 
@@ -170,11 +172,8 @@ public class ArCoreManager {
 
     public interface Listener {
         void onArCoreUnsupported();
-
         void onPermissionNotAllowed();
-
         void showLoadingMessage();
-
         void hideLoadingMessage();
     }
 }

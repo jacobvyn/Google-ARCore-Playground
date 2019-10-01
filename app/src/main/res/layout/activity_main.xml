@@ -41,9 +41,15 @@
         android:id="@+id/configLocal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"></FrameLayout>
+        android:layout_alignParentBottom="true"/>
 
-    <com.arcore.example.compass.CompassViewLM
+    <!--com.arcore.example.compass.CompassViewLM
+        android:id="@+id/compass_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true" /-->
+    <com.arcore.example.compass.CompassViewGoogle
         android:id="@+id/compass_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

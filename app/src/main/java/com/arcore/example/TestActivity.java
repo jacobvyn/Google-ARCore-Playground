@@ -167,21 +167,21 @@ public class TestActivity extends AppCompatActivity {
             private ByteBuffer mIndexBuffer;
 
             public Cube() {
-                final float vertices[] = {
+                final float[] vertices = {
                         -1, -1, -1, 1, -1, -1,
                         1, 1, -1, -1, 1, -1,
                         -1, -1, 1, 1, -1, 1,
                         1, 1, 1, -1, 1, 1,
                 };
 
-                final float colors[] = {
+                final float[] colors = {
                         0, 0, 0, 1, 1, 0, 0, 1,
                         1, 1, 0, 1, 0, 1, 0, 1,
                         0, 0, 1, 1, 1, 0, 1, 1,
                         1, 1, 1, 1, 0, 1, 1, 1,
                 };
 
-                final byte indices[] = {
+                final byte[] indices = {
                         0, 4, 5, 0, 5, 1,
                         1, 5, 6, 1, 6, 2,
                         2, 6, 7, 2, 7, 3,

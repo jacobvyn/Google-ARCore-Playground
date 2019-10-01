@@ -16,7 +16,7 @@ public class CastleObjectDrawer extends SimpleArCoreObjectDrawer {
     public void onDraw(FrameSettings settings) {
         // Visualize anchors created by touch.
         for (ArCoreObject object : positions) {
-            if (!object.isTracking()) {
+            if (object.isTracking()) {
                 continue;
             }
             object.toMatrix(mAnchorMatrix);

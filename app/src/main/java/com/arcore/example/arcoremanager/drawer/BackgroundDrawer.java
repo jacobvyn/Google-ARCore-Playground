@@ -7,25 +7,23 @@ import com.arcore.example.core.FrameSettings;
 import com.arcore.example.core.rendering.BackgroundRenderer;
 
 public class BackgroundDrawer implements Drawer {
-    //the background / camera display
-    public BackgroundRenderer background = new BackgroundRenderer();
+	//the background / camera display
+	public BackgroundRenderer background = new BackgroundRenderer();
 
-    private final Session mArCoreSession;
+	private final Session mArCoreSession;
 
-    public BackgroundDrawer(Session mArCoreSession) {
-        this.mArCoreSession = mArCoreSession;
-    }
+	public BackgroundDrawer(Session mArCoreSession) {
+		this.mArCoreSession = mArCoreSession;
+	}
 
+	@Override
+	public void prepare(Context context) {
+		background.createOnGlThread(context);
+		mArCoreSession.setCameraTextureName(background.getTextureId());
+	}
 
-    @Override
-    public void prepare(Context context) {
-        background.createOnGlThread(/*context=*/context);
-
-        mArCoreSession.setCameraTextureName(background.getTextureId());
-    }
-
-    @Override
-    public void onDraw(FrameSettings arCanvas) {
-        background.draw(arCanvas.getARCoreFrame());
-    }
+	@Override
+	public void onDraw(FrameSettings arCanvas) {
+		background.draw(arCanvas.getARCoreFrame());
+	}
 }

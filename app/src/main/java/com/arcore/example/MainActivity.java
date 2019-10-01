@@ -18,6 +18,8 @@ package com.arcore.example;
 
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,7 @@ import android.widget.Toast;
 import com.arcore.example.arcoremanager.ArCoreManager;
 import com.arcore.example.arcoremanager.object.FerrariObjectDrawer;
 import com.arcore.example.compass.BaseCompassSensor;
+import com.arcore.example.compass.CompassViewGoogle;
 import com.arcore.example.compass.CompassViewLM;
 import com.arcore.example.settings.ObjectSettings;
 
@@ -56,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements ArCoreManager.Lis
     protected ViewGroup mConfigLocal;
 
     @BindView(R.id.compass_view)
-    protected CompassViewLM mCompassView;
+    protected CompassViewGoogle/*LM*/ mCompassView;
 
 //    @BindView(R.id.compass_view_test)
 //    protected CompassViewTest mCompassViewTest;
@@ -89,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements ArCoreManager.Lis
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] results) {
         if (!PermissionHelper.hasPermission(this)) {
             Toast.makeText(this, "Camera permission is needed to run this application", Toast.LENGTH_LONG).show();
             finish();
@@ -145,9 +148,7 @@ public class MainActivity extends AppCompatActivity implements ArCoreManager.Lis
 
     @Override
     public void hideLoadingMessage() {
-        runOnUiThread(() -> {
-            mMessage.setVisibility(View.GONE);
-        });
+        runOnUiThread(() -> mMessage.setVisibility(View.GONE));
     }
 
     @Override
