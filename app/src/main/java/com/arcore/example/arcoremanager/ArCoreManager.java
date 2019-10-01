@@ -122,11 +122,14 @@ public class ArCoreManager {
             }
         });
 
-        subscribeOnLifeCycleEvents();
+       subscribeOnLifeCycleEvents();
 
-        mARCoreRenderer.setListener(() -> {
-            if (mListener != null) {
-                mListener.hideLoadingMessage();
+        mARCoreRenderer.setListener(new ARCoreRenderer.Listener() {
+            @Override
+            public void hideLoading() {
+                if (mListener != null) {
+                    mListener.hideLoadingMessage();
+                }
             }
         });
     }

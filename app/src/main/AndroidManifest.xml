@@ -31,8 +31,8 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <!-- The following must be present to facilitate use of ARCore, if available -->
-        <!--meta-data android:name="com.google.ar.core" android:value="optional" /-->
-        <meta-data android:name="com.google.ar.core" android:value="required" />
+        <!--meta-data android:name="com.google.ar.core" android:value="required" /-->
+        <meta-data android:name="com.google.ar.core" android:value="optional" />
 
         <activity
             android:name=".MainActivity"
