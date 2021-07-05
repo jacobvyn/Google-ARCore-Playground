@@ -4,7 +4,7 @@ import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
 import com.arcore.example.compass.custom.LowPassFilter;
@@ -14,11 +14,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class CustomCompassSensor extends BaseCompassSensor  {
     private String LOG_TAG = CustomCompassSensor.class.getSimpleName();
 
-    private static final float gravity[] = new float[3]; // Gravity (a.k.a accelerometer data)
-    private static final float magnitude[] = new float[3]; // Magnetic
-    private static final float rotation[] = new float[9]; // Rotation matrix in Android format
-    private static final float orientation[] = new float[3]; // azimuth, pitch, roll
-    private static float smoothed[] = new float[3];
+    private static final float[] gravity = new float[3]; // Gravity (a.k.a accelerometer data)
+    private static final float[] magnitude = new float[3]; // Magnetic
+    private static final float[] rotation = new float[9]; // Rotation matrix in Android format
+    private static final float[] orientation = new float[3]; // azimuth, pitch, roll
+    private static float[] smoothed = new float[3];
     private static double floatBearing = 0;
     private static GeomagneticField gmf = null;
 

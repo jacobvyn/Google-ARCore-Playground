@@ -1,13 +1,10 @@
 package com.arcore.example.compass;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatImageView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CompassViewTest extends AppCompatImageView implements OnAzimuthListener, Animation.AnimationListener {
     private float mCurrentAzimuth;

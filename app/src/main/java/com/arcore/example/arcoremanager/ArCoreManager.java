@@ -1,18 +1,19 @@
 package com.arcore.example.arcoremanager;
 
+import android.annotation.SuppressLint;
 import android.opengl.GLSurfaceView;
-import android.support.annotation.NonNull;
-import android.support.v4.view.GestureDetectorCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.core.view.GestureDetectorCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
-import com.google.ar.core.Config;
-import com.google.ar.core.Session;
 import com.arcore.example.RotationGestureDetector;
 import com.arcore.example.arcoremanager.object.ARCoreObjectDrawer;
+import com.google.ar.core.Config;
+import com.google.ar.core.Session;
 
 import florent37.github.com.rxlifecycle.RxLifecycle;
 
@@ -32,7 +33,7 @@ public class ArCoreManager {
         this.mListener = listener;
 
         // Create default config, check is supported, create session from that config.
-        mARCoreSession = new Session(/*context=*/activity);
+        mARCoreSession = new Session(activity);
         mDefaultConfig = Config.createDefaultConfig();
 
         if (!mARCoreSession.isSupported(mDefaultConfig)) {
@@ -40,6 +41,7 @@ public class ArCoreManager {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void setup(final GLSurfaceView surfaceView) {
         mARCoreRenderer = new ARCoreRenderer(mActivity, mARCoreSession);
 
@@ -120,11 +122,14 @@ public class ArCoreManager {
             }
         });
 
-        subscribeOnLifeCycleEvents();
+       subscribeOnLifeCycleEvents();
 
-        mARCoreRenderer.setListener(() -> {
-            if (mListener != null) {
-                mListener.hideLoadingMessage();
+        mARCoreRenderer.setListener(new ARCoreRenderer.Listener() {
+            @Override
+            public void hideLoading() {
+                if (mListener != null) {
+                    mListener.hideLoadingMessage();
+                }
             }
         });
     }
@@ -170,11 +175,8 @@ public class ArCoreManager {
 
     public interface Listener {
         void onArCoreUnsupported();
-
         void onPermissionNotAllowed();
-
         void showLoadingMessage();
-
         void hideLoadingMessage();
     }
 }

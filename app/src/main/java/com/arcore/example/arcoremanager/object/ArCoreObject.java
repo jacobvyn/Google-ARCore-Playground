@@ -84,7 +84,7 @@ public class ArCoreObject {
     }
 
     public boolean isTracking() {
-        return planeAttachment.isTracking();
+        return !planeAttachment.isTracking();
     }
 
     public void toMatrix(float[] anchorMatrix) {

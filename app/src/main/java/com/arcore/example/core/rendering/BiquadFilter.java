@@ -39,7 +39,7 @@ public class BiquadFilter {
         return val;
     }
 
-    private class BiquadFilterInstance {
+    private static class BiquadFilterInstance {
         double a0, a1, a2, b1, b2;
         double Fc = 0.5, Q = 0.707, peakGain = 0.0;
         double z1 = 0.0, z2 = 0.0;

@@ -23,14 +23,13 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Wrapper activity demonstrating the use of the new
@@ -168,21 +167,21 @@ public class TestActivity extends AppCompatActivity {
             private ByteBuffer mIndexBuffer;
 
             public Cube() {
-                final float vertices[] = {
+                final float[] vertices = {
                         -1, -1, -1, 1, -1, -1,
                         1, 1, -1, -1, 1, -1,
                         -1, -1, 1, 1, -1, 1,
                         1, 1, 1, -1, 1, 1,
                 };
 
-                final float colors[] = {
+                final float[] colors = {
                         0, 0, 0, 1, 1, 0, 0, 1,
                         1, 1, 0, 1, 0, 1, 0, 1,
                         0, 0, 1, 1, 1, 0, 1, 1,
                         1, 1, 1, 1, 0, 1, 1, 1,
                 };
 
-                final byte indices[] = {
+                final byte[] indices = {
                         0, 4, 5, 0, 5, 1,
                         1, 5, 6, 1, 6, 2,
                         2, 6, 7, 2, 7, 3,

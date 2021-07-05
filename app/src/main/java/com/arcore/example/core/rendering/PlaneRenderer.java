@@ -321,7 +321,7 @@ public class PlaneRenderer {
         });
 
 
-        float cameraView[] = new float[16];
+        float[] cameraView = new float[16];
         cameraPose.inverse().toMatrix(cameraView, 0);
 
         // Planes are drawn with additive blending, masked by the alpha channel for occlusion.
@@ -368,7 +368,7 @@ public class PlaneRenderer {
             // Get plane index. Keep a map to assign same indices to same planes.
             Integer planeIndex = mPlaneIndexMap.get(plane);
             if (planeIndex == null) {
-                planeIndex = Integer.valueOf(mPlaneIndexMap.size());
+                planeIndex = mPlaneIndexMap.size();
                 mPlaneIndexMap.put(plane, planeIndex);
             }
 

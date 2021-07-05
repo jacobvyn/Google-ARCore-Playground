@@ -3,20 +3,19 @@ package com.arcore.example.compass;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
 public class BestPracticeCompassSensor extends BaseCompassSensor {
     private String LOG_TAG = BestPracticeCompassSensor.class.getSimpleName();
 
-    private static final float mAccelerometerReading[] = new float[3];
-    private static final float mMagnetometerReading[] = new float[3];
-    private static final float mRotationMatrix[] = new float[9];
-    private static final float mOrientationAngles[] = new float[3];
+    private static final float[] mAccelerometerReading = new float[3];
+    private static final float[] mMagnetometerReading = new float[3];
+    private static final float[] mRotationMatrix = new float[9];
+    private static final float[] mOrientationAngles = new float[3];
 
     private Sensor mAccelerometer;
     private Sensor mMagnetometer;
-
 
     public BestPracticeCompassSensor(OnAzimuthListener listener, AppCompatActivity activity) {
         super(listener, activity);

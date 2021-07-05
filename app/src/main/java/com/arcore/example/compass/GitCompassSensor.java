@@ -3,7 +3,7 @@ package com.arcore.example.compass;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Surface;
 
@@ -12,8 +12,8 @@ public class GitCompassSensor extends BaseCompassSensor {
     private Sensor mAccelerometer;
     private Sensor mMagnetometer;
     private static final float ALPHA = 0.97f;
-    private static final float mAccelerometerData[] = new float[3];
-    private static final float mGeomagneticData[] = new float[3];
+    private static final float[] mAccelerometerData = new float[3];
+    private static final float[] mGeomagneticData = new float[3];
 
     private float[] mRawRotationMatrix = new float[9];
     private float[] mRotationMatrix = new float[9];

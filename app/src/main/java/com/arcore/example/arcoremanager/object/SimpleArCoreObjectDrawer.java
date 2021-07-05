@@ -104,7 +104,7 @@ public class SimpleArCoreObjectDrawer implements ARCoreObjectDrawer {
     public void onDraw(FrameSettings settings) {
         // Visualize anchors created by touch.
         for (ArCoreObject arCoreObject : positions) {
-            if (!arCoreObject.isTracking()) {
+            if (arCoreObject.isTracking()) {
                 continue;
             }
 

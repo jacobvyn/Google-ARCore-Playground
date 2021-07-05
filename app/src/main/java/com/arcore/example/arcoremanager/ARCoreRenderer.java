@@ -3,7 +3,7 @@ package com.arcore.example.arcoremanager;
 import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.MotionEvent;
 
